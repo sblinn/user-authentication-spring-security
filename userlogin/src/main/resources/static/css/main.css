@@ -1,0 +1,42 @@
+
+
+body {
+    background-color: rgb(250, 250, 250);
+    width: 100vw;
+}
+
+.content-wrapper {
+    width: 100vw;
+}
+
+header {
+    background-color: rgb(31, 116, 226);
+}
+
+header h1, header h2, header h3 {
+    color: white;
+}
+
+.navbar {
+    
+}
+
+.navbar .nav-link {
+    color: white;
+}
+    .navbar .nav-link:hover{
+        color: rgb(164, 204, 255);
+        font-weight: bold;
+    }
+    .navbar .nav-link:active{
+        font-weight: bold;
+        color: rgb(196, 222, 255);
+    }
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+    .login-form #search-button {
+        
+    }
