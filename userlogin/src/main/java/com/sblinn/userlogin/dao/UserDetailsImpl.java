@@ -3,10 +3,8 @@
 package com.sblinn.userlogin.dao;
 
 import com.sblinn.userlogin.dto.User;
-import java.util.Arrays;
 import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
@@ -20,9 +18,7 @@ public class UserDetailsImpl implements UserDetails {
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority 
-                = new SimpleGrantedAuthority(user.getAuthority());
-        return Arrays.asList(authority);
+        return user.getAuthorities();
     }
 
     @Override

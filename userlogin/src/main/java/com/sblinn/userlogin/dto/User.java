@@ -1,7 +1,13 @@
 package com.sblinn.userlogin.dto;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -24,18 +30,26 @@ public class User {
     @Column(name = "enabled", nullable = false)
     private boolean isEnabled;
     
-    @Column(name = "authority", nullable = false)
-    @NotBlank
-    @Size(max = 25)
-    private String authority;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_authorities",
+            joinColumns = @JoinColumn(
+                    name = "username", 
+                    referencedColumnName = "username"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "authority", 
+                    referencedColumnName = "authority"))
+    private Collection<Authority> authorities;
 
     
-    public User() {}
+    public User() {
+        this.authorities = new ArrayList<>();
+    }
     
     public User(String username, String password, boolean isEnabled) {
         this.username = username;
         this.password = password;
         this.isEnabled = isEnabled;
+        this.authorities = new ArrayList<>();
     }
     
     public String getUsername() {
@@ -61,13 +75,14 @@ public class User {
     public void setIsEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
     }
-    
-    public String getAuthority() {
-        return authority;
+
+    public Collection<Authority> getAuthorities() {
+        return authorities;
     }
 
-    public void setAuthority(String authority) {
-        this.authority = authority;
+    public void setAuthorities(Collection<Authority> authorities) {
+        this.authorities = authorities;
     }
+    
     
 }

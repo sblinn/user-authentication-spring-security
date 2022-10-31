@@ -12,8 +12,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +23,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.sblinn.userlogin.dao.UserDetailsServiceImpl;
-import com.sblinn.userlogin.dto.User;
+import com.sblinn.userlogin.dto.Authority;
+import org.springframework.security.core.GrantedAuthority;
 
 
 
@@ -85,8 +84,9 @@ public class LoginController {
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("USER"));
-        authorities.add(new SimpleGrantedAuthority("ADMIN"));
+        
+        authorities.add(new Authority("ROLE_USER"));
+        //authorities.add(new Authority("ROLE_ADMIN"));
 
         UserDetails userDetails 
                 = new org.springframework.security.core.userdetails.User(
@@ -95,7 +95,7 @@ public class LoginController {
         userDetailsServiceImpl.createUser(userDetails);
         Authentication authentication 
                 = new UsernamePasswordAuthenticationToken(userDetails, 
-                    null, authorities);
+                    password, authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -120,5 +120,5 @@ public class LoginController {
         
         return "logout";
     }
-
+    
 }

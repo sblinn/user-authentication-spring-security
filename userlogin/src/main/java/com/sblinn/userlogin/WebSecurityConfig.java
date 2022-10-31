@@ -33,10 +33,10 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) 
             throws Exception {
 
-        http.authenticationProvider(daoAuthenticationProvider())
+        http.authenticationProvider(authenticationProvider())
                 .authorizeRequests()
-                .antMatchers("/content/**").hasAnyAuthority("USER", "ADMIN")
-                .antMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                .antMatchers("/content/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                .antMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
                 .antMatchers("/", "/home", "/login", "/newuser").permitAll()
                 .antMatchers("/css/**", "/js/**", "/fonts/**").permitAll()
                 
@@ -102,14 +102,6 @@ public class WebSecurityConfig {
         UserDetailsServiceImpl uds = new UserDetailsServiceImpl();
         uds.setDataSource(dataSource);
         
-//        uds.setUsersByUsernameQuery(
-//            "SELECT username, password, enabled "
-//                + "FROM Users WHERE username = ? AND enabled = 1;");
-//        uds.setAuthoritiesByUsernameQuery(
-//            "SELECT username, authority " 
-//                + "FROM Users " 
-//                + "WHERE username = ?;");
-        
         return uds;
     } 
 
@@ -122,7 +114,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
+    public DaoAuthenticationProvider authenticationProvider() {
         
         DaoAuthenticationProvider authProvider =
                 new DaoAuthenticationProvider();
