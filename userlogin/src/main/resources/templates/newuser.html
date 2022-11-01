@@ -4,7 +4,7 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
     <head>
         <!-- Required meta tags -->
-        <title>Hello Security: New Account</title>
+        <title>User Login: New Account</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
@@ -35,10 +35,6 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
             <div class="container login-container">
                 <h2 class="my-3">Create New Account</h2>
-    
-                <div th:if="${param.error}">
-                    Invalid username or password.
-                </div>
 
                 <form class="form-horizontal login-form" role="form" method="post" 
                     th:action="@{../newuser}" th:object="${user}">
