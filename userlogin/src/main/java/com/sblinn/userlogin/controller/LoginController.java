@@ -42,16 +42,11 @@ public class LoginController {
     @GetMapping("/login")
     public String showLoginForm() {
         
-
-        
         return "login";
     }
 
     @PostMapping(value = {"/login", "/login/?error"})
     public String submitLogin(HttpServletRequest request, Model model) {
-
-        String usernameVal = request.getParameter("username");
-        String passwordVal = request.getParameter("password");
         
         return "admin";
     }
