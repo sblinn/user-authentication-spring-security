@@ -4,7 +4,12 @@ package com.sblinn.userlogin.dao;
 import com.sblinn.userlogin.dto.Authority;
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
 
+/**
+ * TODO
+ */
+@Repository
 public class AuthorityRepositoryImpl implements AuthorityRepository {
 
     @Override
@@ -44,7 +49,8 @@ public class AuthorityRepositoryImpl implements AuthorityRepository {
 
     @Override
     public long count() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); 
+        
     }
 
     @Override
