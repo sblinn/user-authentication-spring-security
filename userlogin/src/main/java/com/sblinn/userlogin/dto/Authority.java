@@ -8,6 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 
+/**
+ * Authority is an Entity DTO implementation of Spring Security's 
+ * GrantedAuthority interface.
+ */
 @Entity
 @Table(name = "Authorities")
 public class Authority implements GrantedAuthority {
