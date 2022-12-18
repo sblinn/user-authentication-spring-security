@@ -1,15 +1,26 @@
 package com.sblinn.userlogin.dao;
 
-import com.sblinn.userlogin.dto.User;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public interface UserRepository extends CrudRepository<User, String> {
+import org.springframework.data.repository.Repository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import com.sblinn.userlogin.dto.UserEntity;
+
+/**
+ * Repository interface for UserEntity.
+ */
+public interface UserRepository extends Repository<UserEntity, String> {
     
-    @Query("SELECT u FROM User u WHERE u.username = :username")
-    User findUserByUsername(@Param("username") String username);
-    
+    void createUser(UserEntity userEntity) throws 
+        InvalidEmailException, 
+        InvalidUsernameException;
+
+    boolean userExists(String username);
+
+    UserEntity getUserByUsername(String username) 
+            throws UsernameNotFoundException;
+
+    List<UserEntity> getAllUsers();
+
 }
