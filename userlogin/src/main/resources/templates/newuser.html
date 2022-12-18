@@ -37,7 +37,25 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
                 <h2 class="my-3">Create New Account</h2>
 
                 <form class="form-horizontal login-form" role="form" method="post" 
-                    th:action="@{../newuser}" th:object="${user}">
+                    th:action="@{../newuser}" th:object="${userEntity}">
+
+                    <div class="form-group m-2">
+                        <label for="emailAddress" class="col-md-4 control-label">Email Address:</label>
+                        <div class="col-md-8">
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="emailAddress" 
+                                   placeholder="Email Address" 
+                                   th:field="${userEntity.emailAddress}" />
+                        </div>
+                        <div th:if="${#fields.hasErrors('emailAddress')}">
+                            <p class="alert alert-danger col-md-8"
+                                th:each="error : ${#fields.errors('emailAddress')}" 
+                                th:text="${error}">
+                                Error Message
+                            </p>
+                        </div>
+                    </div>
 
                     <div class="form-group m-2">
                         <label for="username" class="col-md-4 control-label">Username:</label>
@@ -46,7 +64,7 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
                                    class="form-control" 
                                    name="username" 
                                    placeholder="Username" 
-                                   th:field="${user.username}" required/>
+                                   th:field="${userEntity.username}" required/>
                         </div>
                         <div th:if="${#fields.hasErrors('username')}">
                             <p class="alert alert-danger col-md-8"

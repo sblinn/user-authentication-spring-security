@@ -34,13 +34,55 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
         </header>
 
         <div class="container my-5">
-          <h2>Admin Page</h2>
-          
-          <p>
-              Only users with the ADMIN permissions can see this page.
-          </p>
-          <a class="btn btn-primary btn-sm" href="../logout" role="button">
-                    Log out</a>
+            <h2>Admin Page</h2>
+            
+            <p>
+                Only users with the ADMIN permissions can see this page.
+            </p>
+            
+            <div class="container my-5">
+                <h3>Users</h3>
+                <div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email Address</th>
+                                <th>Authorities</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="userEntity : ${userEntities}">
+                                <td class="text-start">
+                                    <p th:text="${userEntity.username}">username</p>
+                                </td>
+                                <td class="text-start">
+                                    <p th:text="${userEntity.emailAddress}">email address</p>
+                                </td>
+                                <td class="text-start" >
+                                    <ul class="list-unstyled" th:each="authority : ${userEntity.authorities}">
+                                        <li><p th:text="${authority.authority}">authorities</p></li>
+                                    </ul>
+                                </td>
+
+                                <td class="">
+                                    <a class="edit-btn btn btn-sm btn-outline-secondary" href="#"
+                                        >
+                                        edit</a>
+                                    <a class="delete-btn btn btn-sm btn-outline-secondary" href="#"
+                                        >
+                                        delete</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <a class="btn btn-primary btn-sm" href="../logout" role="button">
+                Log out</a>
+
         </div>
 
       </div>
