@@ -12,19 +12,22 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.sblinn.userlogin.dao.UserDetailsServiceImpl;
+import com.sblinn.userlogin.dao.InvalidEmailException;
+import com.sblinn.userlogin.dao.InvalidUsernameException;
 import com.sblinn.userlogin.dto.Authority;
-import org.springframework.security.core.GrantedAuthority;
+import com.sblinn.userlogin.dto.UserEntity;
+import com.sblinn.userlogin.service.UserService;
 
 
 
@@ -34,9 +37,8 @@ public class LoginController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-
     @Autowired 
-    UserDetailsServiceImpl userDetailsServiceImpl;
+    UserService userService;
 
 
     @GetMapping("/login")
@@ -52,47 +54,66 @@ public class LoginController {
     }
 
     @GetMapping("/newuser")
-    public String showNewUserForm(Model model) {
-        model.addAttribute("user", 
-        new com.sblinn.userlogin.dto.User());
+    public String showNewUserForm(HttpServletRequest request, Model model) {
 
+        model.addAttribute("userEntity", new UserEntity());
         return "newuser";
     }
 
     @PostMapping("/newuser")
     public String submitNewUser(HttpServletRequest request,
-        @Valid com.sblinn.userlogin.dto.User user, 
+        @Valid UserEntity userEntity, 
         BindingResult result, Model model) {
         
+        String emailAddress = request.getParameter("emailAddress");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirm-password");
 
-        if (!confirmPassword.equals(password)) {
-            String errorMsg = "Passwords must match.";
-            ObjectError error 
-                = new ObjectError("globalError", errorMsg);
-            result.addError(error);
-            model.addAttribute("username", username);
-
-            return "newuser";
-        }
-
         List<GrantedAuthority> authorities = new ArrayList<>();
         
         authorities.add(new Authority("ROLE_USER"));
-        //authorities.add(new Authority("ROLE_ADMIN"));
+        authorities.add(new Authority("ROLE_ADMIN"));
 
-        UserDetails userDetails 
-                = new org.springframework.security.core.userdetails.User(
-                    username, passwordEncoder.encode(password), authorities);
+        UserEntity userDetails = new UserEntity();
+            userDetails.setUsername(username);
+            userDetails.setPassword(passwordEncoder.encode(password)); 
+            userDetails.setEmailAddress(emailAddress);
+            userDetails.setAuthorities(authorities);
+            userDetails.setIsEnabled(true);
 
-        userDetailsServiceImpl.createUser(userDetails);
-        Authentication authentication 
+        // Allow UserDetailsServiceImpl to validate the user details and 
+        // throw exceptions to prevent duplicate users by email or username.
+        try {
+            userService.createUser(userDetails);
+        } catch (InvalidEmailException e) {
+            // add field error to the BindingResult for userEntity
+            result.addError(new FieldError("userEntity", 
+                "emailAddress", e.getMessage()));
+        } catch (InvalidUsernameException e) {
+            result.addError(new FieldError("userEntity", 
+                "username", e.getMessage()));
+        }
+
+        // Add global error to the confirm-password field, which has 'global', 
+        // if input password values do not match.
+        if (!confirmPassword.equals(password)) {
+            final String errorMsg = "Passwords must match.";
+            result.addError(new ObjectError("userEntity", errorMsg));
+        }
+
+        // Reload the same newuser page if any errors were found.
+        if (result.hasErrors()) {
+            model.addAttribute("userEntity", userEntity);
+            return "newuser";
+        } else {
+            // Authenticate the new user and add to SecurityContext
+            Authentication authentication 
                 = new UsernamePasswordAuthenticationToken(userDetails, 
                     password, authorities);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         return "login";
     }
